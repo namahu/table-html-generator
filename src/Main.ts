@@ -1,10 +1,10 @@
-const getActiveSheetData = (): any[][] => {
+import { getCellTextStyles, TextStyle } from "./SheetStyle";
+
+const getActiveSheetDataRange = (): GoogleAppsScript.Spreadsheet.Range => {
     const spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
     const activeSheet = spreadSheet.getActiveSheet();
 
-    const sheetData = activeSheet.getRange("A1").getDataRegion().getValues();
-
-    return sheetData;
+    return activeSheet.getRange("A1").getDataRegion();
 };
 
 const createOutputHTML = (generatedHTML: string): GoogleAppsScript.HTML.HtmlOutput => {
@@ -39,29 +39,50 @@ const createOutputHTML = (generatedHTML: string): GoogleAppsScript.HTML.HtmlOutp
 
 };
 
+/**
+ * 行に含まれるテキスト全てにBoldのスタイルが適用されているかを調べる関数
+ * 
+ * @param {TextStyle[]} textStyles - セル内のテキストに適用されているスタイル
+ * @return {boolean} - trueだったらヘッダー
+ */
+const isHeader = (textStyles: TextStyle[]): boolean => {
+    return textStyles.every(style => style.isBold === true);
+}
+
 const generateTableHTML = () => {
-    const sheetData = getActiveSheetData();
-    const generatedHTML = sheetData.map((row, index) => {
-        if (index === 0) { // 1行目はヘッダー
-            const headercontents = row.map((cell) => {
+
+    const range = getActiveSheetDataRange();
+
+    const sheetData = range.getValues();
+    const textStyles = getCellTextStyles(range);
+
+    const tableHeaders: string[] = [];
+    const bodyContents: string[] = [];
+
+    sheetData.forEach((row, index) => {
+
+        if (isHeader(textStyles[index])) {
+            const rowHTMLStr = row.map(cell => {
                 return "<th>" + cell + "</th>";
             }).join("");
-
-            return "<thead><tr>" + headercontents + "</tr></thead>";
+            tableHeaders.push("<tr>" + rowHTMLStr + "</tr>");
+            return;
         }
 
-        const bodyContents = row.map(cell => {
+        const contents = row.map(cell => {
             return "<td>" + cell + "</td>";
         }).join("");
+        bodyContents.push("<tr>" + contents + "</tr>");
+    });
 
-        return "<tr>" + bodyContents + "</tr>";
+    Logger.log("<table>" + tableHeaders + bodyContents + "</table>");
 
-    }).join("");
-
-    Logger.log("<table>" + generatedHTML + "</table>");
-
-    const htmlOutput = createOutputHTML("<table>" + generatedHTML + "</table>")
-        .setTitle("HTML変換結果");
+    const htmlOutput = createOutputHTML(
+        "<table><thead>" + tableHeaders.join("") +
+        "</thead><tbody>" + bodyContents.join("") +
+        "</tbody></table>"
+    ).setTitle("HTML変換結果");
+    
     SpreadsheetApp.getUi().showSidebar(htmlOutput);
 };
 
