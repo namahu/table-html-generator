@@ -1,4 +1,4 @@
-import { generateStyle } from "./GenerateHTML";
+import { generateRowHTML } from "./GenerateHTML";
 import { getCellTextStyles, TextStyle } from "./SheetStyle";
 
 const getActiveSheetDataRange = (): GoogleAppsScript.Spreadsheet.Range => {
@@ -63,19 +63,19 @@ const generateTableHTML = () => {
     sheetData.forEach((row, index) => {
 
         if (isHeader(textStyles[index])) {
-            const rowHTMLStr = row.map((cell, cellIndex) => {
-                const style = generateStyle(textStyles[index][cellIndex]);
-                return '      <th style="' + style + '">' + cell + '</th>\n';
-            }).join("");
-            tableHeaders.push("    <tr>\n" + rowHTMLStr + "    </tr>\n");
+            tableHeaders.push(
+                "    <tr>\n"
+                + generateRowHTML(row, textStyles[index], true)
+                + "    </tr>\n"
+            );
             return;
         }
 
-        const contents = row.map((cell, cellIndex) => {
-            const style = generateStyle(textStyles[index][cellIndex])
-            return '      <td style="' + style + '">' + cell + '</td>\n';
-        }).join("");
-        bodyContents.push("    <tr>\n" + contents + "    </tr>\n");
+        bodyContents.push(
+            "    <tr>\n"
+            + generateRowHTML(row, textStyles[index], false)
+            + "    </tr>\n"
+        );
     });
 
     Logger.log("<table>" + tableHeaders + bodyContents + "</table>");
