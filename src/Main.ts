@@ -1,3 +1,4 @@
+import { generateStyle } from "./GenerateHTML";
 import { getCellTextStyles, TextStyle } from "./SheetStyle";
 
 const getActiveSheetDataRange = (): GoogleAppsScript.Spreadsheet.Range => {
@@ -62,25 +63,27 @@ const generateTableHTML = () => {
     sheetData.forEach((row, index) => {
 
         if (isHeader(textStyles[index])) {
-            const rowHTMLStr = row.map(cell => {
-                return "<th>" + cell + "</th>";
+            const rowHTMLStr = row.map((cell, cellIndex) => {
+                const style = generateStyle(textStyles[index][cellIndex]);
+                return '      <th style="' + style + '">' + cell + '</th>\n';
             }).join("");
-            tableHeaders.push("<tr>" + rowHTMLStr + "</tr>");
+            tableHeaders.push("    <tr>\n" + rowHTMLStr + "    </tr>\n");
             return;
         }
 
-        const contents = row.map(cell => {
-            return "<td>" + cell + "</td>";
+        const contents = row.map((cell, cellIndex) => {
+            const style = generateStyle(textStyles[index][cellIndex])
+            return '      <td style="' + style + '">' + cell + '</td>\n';
         }).join("");
-        bodyContents.push("<tr>" + contents + "</tr>");
+        bodyContents.push("    <tr>\n" + contents + "    </tr>\n");
     });
 
     Logger.log("<table>" + tableHeaders + bodyContents + "</table>");
 
     const htmlOutput = createOutputHTML(
-        "<table><thead>" + tableHeaders.join("") +
-        "</thead><tbody>" + bodyContents.join("") +
-        "</tbody></table>"
+        "<table>\n  <thead>\n" + tableHeaders.join("") +
+        "  </thead>\n  <tbody>\n" + bodyContents.join("") +
+        "  </tbody>\n</table>"
     ).setTitle("HTML変換結果");
     
     SpreadsheetApp.getUi().showSidebar(htmlOutput);
