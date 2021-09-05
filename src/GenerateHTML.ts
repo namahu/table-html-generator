@@ -31,6 +31,8 @@ const generateRowHTML = (
     row: any[], 
     textStyles: TextStyle[], 
     backGrounds: string[], 
+    horizonalAlingments: string[],
+    verticalAlignments: string[],
     isHeader: boolean
 ) => {
     const tag = isHeader ? "th" : "td";
@@ -40,9 +42,15 @@ const generateRowHTML = (
 
         const style = generateStyle(textStyles[index]);
         const backgroundColor: string = backGrounds[index];
+        const textAlign: string = 
+            horizonalAlingments[index] === "general-left"
+            ? "left" : horizonalAlingments[index];
+        const verticalAlign: string = verticalAlignments[index];
 
         style.push("width: " + columnWitdh + "px;");
         style.push("background-color: " + backgroundColor + ";");
+        style.push("text-align: " + textAlign + ";");
+        style.push("vertical-align: " + verticalAlign + ";");
 
         return '      <' + tag +  ' style="' + style.join("") + '">'
             + cell

@@ -29,4 +29,12 @@ const getBackgrounds = (range: GoogleAppsScript.Spreadsheet.Range): string[][] =
     return range.getBackgrounds();
 };
 
-export { getBackgrounds, getCellTextStyles };
+const getHorizonalAlignments = (range: GoogleAppsScript.Spreadsheet.Range): string[][] => {
+    return range.getHorizontalAlignments();
+};
+
+const getVerticalAlignments = (range: GoogleAppsScript.Spreadsheet.Range): string[][] => {
+    return range.getVerticalAlignments();
+};
+
+export { getBackgrounds, getCellTextStyles, getHorizonalAlignments, getVerticalAlignments };

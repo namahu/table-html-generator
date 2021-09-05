@@ -1,5 +1,5 @@
 import { generateRowHTML } from "./GenerateHTML";
-import { getBackgrounds, getCellTextStyles, TextStyle } from "./SheetStyle";
+import { getBackgrounds, getCellTextStyles, getHorizonalAlignments, getVerticalAlignments, TextStyle } from "./SheetStyle";
 
 const createOutputHTML = (generatedHTML: string): GoogleAppsScript.HTML.HtmlOutput => {
     const outputHTML = `
@@ -51,6 +51,8 @@ const generateTableHTML = () => {
     const sheetData = range.getValues();
     const textStyles = getCellTextStyles(range);
     const backGrounds: string[][] = getBackgrounds(range);
+    const horizonalAlignments: string[][] = getHorizonalAlignments(range);
+    const verticalAlignments: string[][] = getVerticalAlignments(range);
 
     const tableHeaders: string[] = [];
     const bodyContents: string[] = [];
@@ -63,7 +65,15 @@ const generateTableHTML = () => {
         if (isHeader(textStyles[index])) {
             tableHeaders.push(
                 '    <tr style="height: ' + rowHeight + 'px;">\n'
-                + generateRowHTML(sheet, row, textStyles[index], backGrounds[index], true)
+                + generateRowHTML(
+                    sheet,
+                    row,
+                    textStyles[index],
+                    backGrounds[index],
+                    horizonalAlignments[index],
+                    verticalAlignments[index],
+                    true
+                )
                 + "    </tr>\n"
             );
             return;
@@ -71,7 +81,15 @@ const generateTableHTML = () => {
 
         bodyContents.push(
             '    <tr style="height: ' + rowHeight + 'px;">\n'
-            + generateRowHTML(sheet, row, textStyles[index], backGrounds[index], false)
+            + generateRowHTML(
+                sheet,
+                row,
+                textStyles[index],
+                backGrounds[index],
+                horizonalAlignments[index],
+                verticalAlignments[index],
+                true
+            )
             + "    </tr>\n"
         );
     });
