@@ -58,13 +58,12 @@ const generateTableHTML = () => {
     sheetData.forEach((row, index) => {
 
         const rowPosition: number = index + 1;
-
         const rowHeight: number = sheet.getRowHeight(rowPosition);
 
         if (isHeader(textStyles[index])) {
             tableHeaders.push(
                 '    <tr style="height: ' + rowHeight + 'px;">\n'
-                + generateRowHTML(row, textStyles[index], backGrounds[index], true)
+                + generateRowHTML(sheet, row, textStyles[index], backGrounds[index], true)
                 + "    </tr>\n"
             );
             return;
@@ -72,7 +71,7 @@ const generateTableHTML = () => {
 
         bodyContents.push(
             '    <tr style="height: ' + rowHeight + 'px;">\n'
-            + generateRowHTML(row, textStyles[index], backGrounds[index], false)
+            + generateRowHTML(sheet, row, textStyles[index], backGrounds[index], false)
             + "    </tr>\n"
         );
     });
