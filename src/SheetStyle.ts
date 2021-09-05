@@ -25,4 +25,8 @@ const getCellTextStyles = (range: GoogleAppsScript.Spreadsheet.Range): TextStyle
     })
 };
 
-export { getCellTextStyles };
+const getBackgrounds = (range: GoogleAppsScript.Spreadsheet.Range): string[][] => {
+    return range.getBackgrounds();
+};
+
+export { getBackgrounds, getCellTextStyles };

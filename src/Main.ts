@@ -1,5 +1,5 @@
 import { generateRowHTML } from "./GenerateHTML";
-import { getCellTextStyles, TextStyle } from "./SheetStyle";
+import { getBackgrounds, getCellTextStyles, TextStyle } from "./SheetStyle";
 
 const getActiveSheetDataRange = (): GoogleAppsScript.Spreadsheet.Range => {
     const spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
@@ -56,6 +56,7 @@ const generateTableHTML = () => {
 
     const sheetData = range.getValues();
     const textStyles = getCellTextStyles(range);
+    const backGrounds: string[][] = getBackgrounds(range);
 
     const tableHeaders: string[] = [];
     const bodyContents: string[] = [];
@@ -65,7 +66,7 @@ const generateTableHTML = () => {
         if (isHeader(textStyles[index])) {
             tableHeaders.push(
                 "    <tr>\n"
-                + generateRowHTML(row, textStyles[index], true)
+                + generateRowHTML(row, textStyles[index], backGrounds[index], true)
                 + "    </tr>\n"
             );
             return;
@@ -73,7 +74,7 @@ const generateTableHTML = () => {
 
         bodyContents.push(
             "    <tr>\n"
-            + generateRowHTML(row, textStyles[index], false)
+            + generateRowHTML(row, textStyles[index], backGrounds[index], false)
             + "    </tr>\n"
         );
     });
