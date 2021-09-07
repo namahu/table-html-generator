@@ -28,15 +28,29 @@ const generateStyle = (textStyle: TextStyle): string[] => {
 
 const generateRowHTML = (
     sheet: GoogleAppsScript.Spreadsheet.Sheet, 
-    row: any[], 
+    row: any[],
     textStyles: TextStyle[], 
     backGrounds: string[], 
     horizonalAlingments: string[],
     verticalAlignments: string[],
+    mappingSheet: any[],
     isHeader: boolean
 ) => {
     const tag = isHeader ? "th" : "td";
     return row.map((cell, index) => {
+
+        const attributes = [];
+
+        if (mappingSheet[index].isMerged) {
+            if (!mappingSheet[index].isMergeStartCell) {
+                return;
+            }
+
+            attributes.push('rowspan="' + mappingSheet[index].rowSpan + '"');
+            attributes.push('colspan="' + mappingSheet[index].colSpan + '"');
+
+        }
+
         const columnPosition: number = index + 1;
         const columnWitdh: number = sheet.getColumnWidth(columnPosition);
 
@@ -52,7 +66,9 @@ const generateRowHTML = (
         style.push("text-align: " + textAlign + ";");
         style.push("vertical-align: " + verticalAlign + ";");
 
-        return '      <' + tag +  ' style="' + style.join("") + '">'
+        attributes.push('style="' + style.join(" ") + '"');
+
+        return "      <" + tag + " " + attributes.join(" ") + ">"
             + cell
             + '</' + tag + '>\n';
     }).join("");

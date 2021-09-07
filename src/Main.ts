@@ -1,5 +1,5 @@
 import { generateRowHTML } from "./GenerateHTML";
-import { getBackgrounds, getCellTextStyles, getHorizonalAlignments, getVerticalAlignments, TextStyle } from "./SheetStyle";
+import { getBackgrounds, getCellTextStyles, getHorizonalAlignments, getMergedRanges, getVerticalAlignments, TextStyle } from "./SheetStyle";
 
 const createOutputHTML = (generatedHTML: string): GoogleAppsScript.HTML.HtmlOutput => {
     const outputHTML = `
@@ -43,16 +43,26 @@ const isHeader = (textStyles: TextStyle[]): boolean => {
     return textStyles.every(style => style.isBold === true);
 }
 
+const generate2DArray = (row: number, column: number) => {
+    return [...Array(row)].map(() => Array(column).fill(null).map(() => ({
+        isMerged: false,
+        isMergeStartCell: false
+    })));
+};
 const generateTableHTML = () => {
 
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    const range = sheet.getRange("A1").getDataRegion();
+    const range = sheet.getDataRange();
 
     const sheetData = range.getValues();
     const textStyles = getCellTextStyles(range);
     const backGrounds: string[][] = getBackgrounds(range);
     const horizonalAlignments: string[][] = getHorizonalAlignments(range);
     const verticalAlignments: string[][] = getVerticalAlignments(range);
+
+    const sheetMap = generate2DArray(sheetData.length, sheetData[0].length)
+
+    const mergedRangesMappedSheet = getMergedRanges(range, sheetMap);
 
     const tableHeaders: string[] = [];
     const bodyContents: string[] = [];
@@ -72,6 +82,7 @@ const generateTableHTML = () => {
                     backGrounds[index],
                     horizonalAlignments[index],
                     verticalAlignments[index],
+                    mergedRangesMappedSheet[index],
                     true
                 )
                 + "    </tr>\n"
@@ -88,7 +99,8 @@ const generateTableHTML = () => {
                 backGrounds[index],
                 horizonalAlignments[index],
                 verticalAlignments[index],
-                true
+                mergedRangesMappedSheet[index],
+                false
             )
             + "    </tr>\n"
         );
