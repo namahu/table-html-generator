@@ -7,12 +7,11 @@ const createOutputHTML = (generatedHTML: string): GoogleAppsScript.HTML.HtmlOutp
         /\{\{ generatedHTML \}\}/,
         generatedHTML
     );
+    return HtmlService.createTemplate(replacedTemplate).evaluate();
+};
 
-    const html = HtmlService.createTemplate(replacedTemplate);
-
-    html.css = "client/Stylesheet.html";
-
-    return html.evaluate();
+const include = (fileName: string) => {
+    return HtmlService.createHtmlOutputFromFile(fileName).getContent();
 };
 
 /**
