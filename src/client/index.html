@@ -7,7 +7,10 @@
 </head>
 
 <body>
-    <textarea disabled>{{ generatedHTML }}</textarea>
+    <textarea id="htmlViewArea" disabled>{{ generatedHTML }}</textarea>
+    <button type="button" id="htmlCopyButton">Copy to clip bord</button>
+
+    <?!= include("client/Javascript"); ?>
 </body>
 
 </html>
