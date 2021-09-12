@@ -2,35 +2,16 @@ import { generateRowHTML } from "./GenerateHTML";
 import { getBackgrounds, getCellTextStyles, getHorizonalAlignments, getMergedRanges, getVerticalAlignments, TextStyle } from "./SheetStyle";
 
 const createOutputHTML = (generatedHTML: string): GoogleAppsScript.HTML.HtmlOutput => {
-    const outputHTML = `
-        <!DOCTYPE html>
-        <html lang="ja">
-            <head>
-                <base target="_top">
-                <style>
-                    body {
-                        margin: 0;
-                        padding: 0;
-                    }
-                    textarea {
-                        border-radius: 4px;
-                        font-size: 16px;
-                        height: 72vh;
-                        margin: 4px;
-                        overflow: scroll;
-                        padding: 4px;
-                        width: 280px;
-                    }
-                </style>
-            </head>
-            <body>
-            <textarea disabled>${generatedHTML}</textarea>
-            </body>
-        </html>
-    `;
+    const template = HtmlService.createTemplateFromFile("client/index").getRawContent();
+    const replacedTemplate = template.replace(
+        /\{\{ generatedHTML \}\}/,
+        generatedHTML
+    );
+    return HtmlService.createTemplate(replacedTemplate).evaluate();
+};
 
-    return HtmlService.createHtmlOutput(outputHTML);
-
+const include = (fileName: string) => {
+    return HtmlService.createHtmlOutputFromFile(fileName).getContent();
 };
 
 /**
