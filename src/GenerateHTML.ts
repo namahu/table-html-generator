@@ -26,6 +26,15 @@ const generateStyle = (textStyle: TextStyle): string[] => {
     ];
 };
 
+const escapeHTML = (text: string) => {
+    return text.replace(/\n/g, "<br>")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;" )
+        .replace(/'/g, "&#39;" );
+};
+
 const generateRowHTML = (
     sheet: GoogleAppsScript.Spreadsheet.Sheet, 
     row: any[],
@@ -69,7 +78,7 @@ const generateRowHTML = (
         attributes.push('style="' + style.join(" ") + '"');
 
         return "      <" + tag + " " + attributes.join(" ") + ">"
-            + cell
+            + escapeHTML(cell)
             + '</' + tag + '>\n';
     }).join("");
 };
