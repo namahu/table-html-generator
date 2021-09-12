@@ -1,0 +1,20 @@
+<script>
+    const htmlCopyButton = document.getElementById("htmlCopyButton");
+    htmlCopyButton.addEventListener("click", () => {
+        const htmlViewArea = document.getElementById("htmlViewArea");
+        copyToClipbord(htmlViewArea.value);
+    });
+
+    const copyToClipbord = async (text) => {
+        if (!navigator.clipboard) {
+            window.alert("Failed to copy.\nUnsupported browser.");
+        }
+
+        try {
+            await navigator.clipboard.writeText(text);
+            window.alert("Successfully copied.");
+        } catch (error) {
+            window.alert(error.message);
+        }
+    };
+</script>
