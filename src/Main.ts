@@ -33,7 +33,7 @@ const generate2DArray = (row: number, column: number) => {
 const generateTableHTML = () => {
 
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    const range = sheet.getDataRange();
+    const range = sheet.getDataRange().getDataRegion();
 
     const sheetData = range.getValues();
     const textStyles = getCellTextStyles(range);
